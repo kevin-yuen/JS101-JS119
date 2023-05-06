@@ -66,18 +66,18 @@ const printEven = () => {
 // The area of the room is 70.00 square meters (753.47 square feet).
 
 const convertRoomSize = () => {
-  const readLineSync = require("readline-sync");
-  const length = Number(
-    readLineSync.question("Enter the length of the room in meters:\n")
+  const READLINE_SYNC = require("readline-sync");
+  const LENGTH = Number(
+    READLINE_SYNC.question("Enter the length of the room in meters:\n")
   );
-  const width = Number(
-    readLineSync.question("Enter the width of the room in meters:\n")
+  const WIDTH = Number(
+    READLINE_SYNC.question("Enter the width of the room in meters:\n")
   );
-  const meters = length * width;
-  const feet = meters * 10.7639;
+  const METERS = LENGTH * WIDTH;
+  const FEET = METERS * 10.7639;
 
   console.log(
-    `The area of the room is ${meters.toFixed(2)} square meters (${feet.toFixed(
+    `The area of the room is ${METERS.toFixed(2)} square meters (${FEET.toFixed(
       2
     )} square feet).`
   );
@@ -98,17 +98,17 @@ const convertRoomSize = () => {
 // The total is $230.00
 
 const calculateTip = () => {
-  const readLineSync = require("readline-sync");
-  const bill = Number(readLineSync.question("What is the bill? "));
-  const tipPercentage = Number(
-    readLineSync.question("What is the tip percentage? ")
+  const READLINE_SYNC = require("readline-sync");
+  const BILL = Number(READLINE_SYNC.question("What is the bill? "));
+  const TIP_PERCENTAGE = Number(
+    READLINE_SYNC.question("What is the tip percentage? ")
   );
 
-  const tipDollar = bill * (tipPercentage / 100);
-  const totalDollar = bill + tipDollar;
+  const TIP_DOLLAR = BILL * (TIP_PERCENTAGE / 100);
+  const TOTAL_DOLLAR = BILL + TIP_DOLLAR;
 
-  console.log(`\nThe tip is $${tipDollar.toFixed(2)}`);
-  console.log(`The total is $${totalDollar.toFixed(2)}`);
+  console.log(`\nThe tip is $${TIP_DOLLAR.toFixed(2)}`);
+  console.log(`The total is $${TOTAL_DOLLAR.toFixed(2)}`);
 };
 
 //calculateTip();
@@ -144,20 +144,20 @@ const calculateTip = () => {
 // prompt the second question again
 
 const calculateSumOrProduct = () => {
-  const readLine = require("readline-sync");
-  const re = /^[sp]$/;
+  const READLINE_SYNC = require("readline-sync");
+  const RE = /^[sp]$/;
   let userNumber = 0;
   let userCalculateMethod;
   let output;
 
   do {
     userNumber = Number(
-      readLine.question("Please enter an integer greater than 0: ")
+      READLINE_SYNC.question("Please enter an integer greater than 0: ")
     );
 
     if (userNumber > 0 && !isNaN(userNumber)) {
       do {
-        userCalculateMethod = readLine.question(
+        userCalculateMethod = READLINE_SYNC.question(
           'Enter "s" to compute the sum, or "p" to compute the product. '
         );
 
@@ -172,7 +172,7 @@ const calculateSumOrProduct = () => {
             output *= i;
           }
         }
-      } while (userCalculateMethod.search(re) < 0);
+      } while (userCalculateMethod.search(RE) < 0);
     }
   } while (userNumber <= 0 || isNaN(userNumber));
 
@@ -198,13 +198,13 @@ const calculateSumOrProduct = () => {
 // shortLongShort('', 'xyz');         // "xyz"
 
 const shortLongShort = (string1, string2) => {
-  const [string1Length, string2Length] = [string1.length, string2.length];
-  const output =
-    string1Length < string2Length
+  const [STRING1_LENGTH, STRING2_LENGTH] = [string1.length, string2.length];
+  const OUTPUT =
+    STRING1_LENGTH < STRING2_LENGTH
       ? string1 + string2 + string1
       : string2 + string1 + string2;
 
-  console.log(output);
+  console.log(OUTPUT);
 };
 
 // shortLongShort("abc", "defgh"); // "abcdefghabc"
