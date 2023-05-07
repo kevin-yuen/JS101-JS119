@@ -369,6 +369,6 @@ const negative = (number) => {
   return number >= 0 ? number / -1 : number;
 };
 
-console.log(negative(5));
-console.log(negative(-3));
-console.log(negative(0));
+// console.log(negative(5));
+// console.log(negative(-3));
+// console.log(negative(0));
