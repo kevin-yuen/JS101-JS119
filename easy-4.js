@@ -374,7 +374,6 @@ const integerToString_bk = (integer) => {
 
 const signedIntegerToString = (integer) => {
   let numbers = [];
-  //let integerManipulate = integer;
   let sign = "";
 
   if (Math.sign(integer) === 1) {
@@ -389,13 +388,12 @@ const signedIntegerToString = (integer) => {
     integer = Math.floor(integer / 10);
   } while (integer >= 1);
 
-  //console.log(sign.concat(numbers.reverse().join("")));
-  //console.log(typeof sign.concat(numbers.reverse().join("")));
   return sign.concat(numbers.reverse().join(""));
 };
 
-console.log(signedIntegerToString(4321) === "+4321");
-console.log(signedIntegerToString(-123) === "-123");
-console.log(signedIntegerToString(0) === "0");
+//console.log(signedIntegerToString(4321) === "+4321");
+//console.log(signedIntegerToString(-123) === "-123");
+//console.log(signedIntegerToString(0) === "0");
 
-// ["+", 1, ]
+// console.log(5 == "5");
+// console.log("5" == 5);
