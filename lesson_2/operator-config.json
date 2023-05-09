@@ -1,0 +1,6 @@
+{
+  "add": "sum",
+  "subtract": "difference",
+  "multiply": "product",
+  "divide": "quotient"
+}
