@@ -1,0 +1,30 @@
+{
+  "en": {
+    "number-1": "Enter the",
+    "number-2": "first",
+    "number-3": "second",
+    "number-4": "number:",
+    "operation": "Enter the type of mathematical operation to perform:",
+    "output-1": "The",
+    "output-2": "of",
+    "output-3": "and",
+    "output-4": "is",
+    "restart": "Do you want to perform another calculation (y/n)?"
+  },
+  "es": {
+    "number-1": "Introducir el",
+    "number-2": "primero",
+    "number-3": "segundo",
+    "number-4": "número:",
+    "operation": "Introduzca el tipo de operación matemática a realizar:",
+    "output-1": "El",
+    "output-2": "de",
+    "output-3": "y",
+    "output-4": "es",
+    "restart": "¿Desea realizar otro cálculo (s/n)?",
+    "sum": "suma",
+    "difference": "diferencia",
+    "product": "producto",
+    "quotient": "cociente"
+  }
+}
