@@ -1,0 +1,16 @@
+{
+  "start": "starting up the calculator...",
+  "welcome": "Welcome to the Mortgage / Car Loan Calculator!",
+  "loanAmount": "Enter the borrowed loan amount:",
+  "loanTerm": "Enter the loan term (year/month):",
+  "loanDuration": "Enter the loan duration in",
+  "interestRate": "Enter the interest rate (based on APR):",
+  "monthlyPayment": "Monthly Payment:",
+  "totalPayment": "Total Payment:",
+  "monthlyInterest": "Monthly Interest:",
+  "totalInterest": "Total Interest:",
+  "loanDurationError": "Please provide a positive loan duration value.",
+  "interestRateError": "Please provide a positive interest value.",
+  "restart": "Do you want to calculate again? (y/n)",
+  "appreciation": "Thanks for using the Mortgage / Car Loan Calculator! GoodBye!"
+}
