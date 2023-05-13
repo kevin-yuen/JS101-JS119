@@ -2,15 +2,19 @@ const MESSAGE_CONFIG = require("./message.json");
 const READLINE_SYNC = require("readline-sync");
 
 let restartProgram = false;
+let loanAmount = 0;
+let loanDuration = 0;
+let interestRate = 0;
+let monthlyPayment = 0;
 
 const greeting = () => {
   let welcomeBoard = "";
   const WELCOME_MESSAGE = `${MESSAGE_CONFIG["welcome"]}`;
 
-  for (let i = 0; i < 5; i++) {
-    if (i === 0 || i === 4) {
+  for (let cursor = 0; cursor < 5; cursor++) {
+    if (cursor === 0 || cursor === 4) {
       welcomeBoard += "-".repeat(58).concat("\n");
-    } else if (i % 2 !== 0) {
+    } else if (cursor % 2 !== 0) {
       welcomeBoard += "|".concat(" ".repeat(56).concat("|\n"));
     } else {
       welcomeBoard += "|".concat(
@@ -25,24 +29,62 @@ const greeting = () => {
   return welcomeBoard;
 };
 
-const getLoanAmount = () => {
-  let suppliedLoanAmount = 0;
+const printErrorMessage = (messageKey) => {
+  console.log(`ERROR: ${MESSAGE_CONFIG[messageKey]}`);
+};
 
+const getLoanAmount = () => {
   while (true) {
-    suppliedLoanAmount = parseFloat(
+    loanAmount = parseFloat(
       READLINE_SYNC.question(
         `\n>>>>> ${MESSAGE_CONFIG["loanAmount"].concat(" ")}`
       )
     ).toFixed(2);
 
-    if (suppliedLoanAmount > 0 && !isNaN(suppliedLoanAmount)) break;
+    if (loanAmount > 0 && !isNaN(loanAmount)) break;
   }
-
-  return suppliedLoanAmount;
 };
 
-const yearToMonth = (loanDuration) => {
-  return loanDuration * 12;
+const verifyDurationInterest = (suppliedInput, parsedInput, minimumLimit) => {
+  if (
+    suppliedInput.trim() === "" ||
+    isNaN(parseFloat(suppliedInput)) ||
+    parsedInput < minimumLimit
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+const calculateLoanDuration = (loanTerm, suppliedLoanDuration) => {
+  const F_SUPPLIED_LOAN_DURATION = parseFloat(suppliedLoanDuration);
+
+  return loanTerm === "year"
+    ? F_SUPPLIED_LOAN_DURATION * 12
+    : F_SUPPLIED_LOAN_DURATION;
+};
+
+const getLoanDuration = (loanTerm) => {
+  while (true) {
+    loanDuration = READLINE_SYNC.question(
+      `>>>>> ${MESSAGE_CONFIG["loanDuration"].concat(` ${loanTerm}: `)}`
+    );
+
+    const isLoanDurationValid = verifyDurationInterest(
+      loanDuration,
+      parseFloat(loanDuration),
+      1
+    );
+
+    if (isLoanDurationValid === false) {
+      printErrorMessage("loanDurationError");
+      continue;
+    }
+
+    loanDuration = calculateLoanDuration(loanTerm, loanDuration);
+    break;
+  }
 };
 
 const getLoanTerm = () => {
@@ -56,65 +98,44 @@ const getLoanTerm = () => {
     if (suppliedLoanTerm === "year" || suppliedLoanTerm === "month") break;
   }
 
-  return suppliedLoanTerm;
+  getLoanDuration(suppliedLoanTerm);
 };
 
-const getLoanDuration = (loanTerm) => {
-  let suppliedLoanDuration = 0;
-
-  while (true) {
-    suppliedLoanDuration = READLINE_SYNC.question(
-      `>>>>> ${MESSAGE_CONFIG["loanDuration"].concat(` ${loanTerm}: `)}`
-    );
-
-    if (
-      suppliedLoanDuration.trim() === "" ||
-      isNaN(parseFloat(suppliedLoanDuration)) ||
-      parseFloat(suppliedLoanDuration) < 1
-    ) {
-      console.log(`ERROR: ${MESSAGE_CONFIG["loanDurationError"]}`);
-      continue;
-    }
-
-    suppliedLoanDuration = parseFloat(suppliedLoanDuration);
-    suppliedLoanDuration =
-      loanTerm === "year"
-        ? yearToMonth(suppliedLoanDuration)
-        : parseFloat(suppliedLoanDuration);
-
-    break;
-  }
-
-  return suppliedLoanDuration;
+const calculateInterestRate = (fInterestRate) => {
+  return fInterestRate > 0 ? fInterestRate / 100 / 12 : fInterestRate;
 };
 
 const getInterestRate = () => {
-  let suppliedInterestRate = 0;
-
   while (true) {
-    suppliedInterestRate = READLINE_SYNC.question(
+    interestRate = READLINE_SYNC.question(
       `>>>>> ${MESSAGE_CONFIG["interestRate"].concat(" ")}`
     );
-    const F_SUPPLIED_INTEREST_RATE =
-      parseFloat(suppliedInterestRate).toFixed(2);
+    const F_INTEREST_RATE = parseFloat(interestRate).toFixed(2);
 
-    if (
-      suppliedInterestRate.trim() === "" ||
-      isNaN(parseFloat(suppliedInterestRate)) ||
-      F_SUPPLIED_INTEREST_RATE < 0
-    ) {
-      console.log(`ERROR: ${MESSAGE_CONFIG["interestRateError"]}`);
+    const isInterestValid = verifyDurationInterest(
+      interestRate,
+      F_INTEREST_RATE,
+      0
+    );
+
+    if (isInterestValid === false) {
+      printErrorMessage("interestRateError");
       continue;
     }
 
-    suppliedInterestRate =
-      F_SUPPLIED_INTEREST_RATE > 0
-        ? F_SUPPLIED_INTEREST_RATE / 100 / 12
-        : F_SUPPLIED_INTEREST_RATE;
+    interestRate = calculateInterestRate(F_INTEREST_RATE);
     break;
   }
+};
 
-  return suppliedInterestRate;
+const calculateMonthlyPayment = () => {
+  if (interestRate > 0) {
+    monthlyPayment =
+      loanAmount *
+      (interestRate / (1 - Math.pow(1 + interestRate, -loanDuration)));
+  } else {
+    monthlyPayment = loanAmount / loanDuration;
+  }
 };
 
 const formatting = (amount) => {
@@ -122,6 +143,25 @@ const formatting = (amount) => {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
+};
+
+const printPaymentOutput = () => {
+  const TOTAL_PAYMENT = formatting(monthlyPayment * loanDuration);
+
+  console.log(`Payment Every Month: $${monthlyPayment.toFixed(2)}`);
+  console.log(`Total of ${loanDuration} Payments: $${TOTAL_PAYMENT}`);
+};
+
+const printInterestOutput = () => {
+  const TEMP_INTEREST_RATE = monthlyPayment * loanDuration;
+
+  const MONTHLY_INTEREST = formatting(
+    (TEMP_INTEREST_RATE - loanAmount) / loanDuration
+  );
+  const TOTAL_INTEREST = formatting(TEMP_INTEREST_RATE - loanAmount);
+
+  console.log(`Interest Every Month: $${MONTHLY_INTEREST}`);
+  console.log(`Total Interest: $${TOTAL_INTEREST}`);
 };
 
 const restart = () => {
@@ -137,34 +177,16 @@ const restart = () => {
 
 const main = () => {
   while (true) {
-    let monthlyPayment = 0;
-    const LOAN_AMOUNT = getLoanAmount();
-    const LOAN_DURATION = getLoanDuration(getLoanTerm());
-    const INTEREST_RATE = getInterestRate();
-
-    if (INTEREST_RATE > 0) {
-      monthlyPayment =
-        LOAN_AMOUNT *
-        (INTEREST_RATE / (1 - Math.pow(1 + INTEREST_RATE, -LOAN_DURATION)));
-    } else {
-      monthlyPayment = LOAN_AMOUNT / LOAN_DURATION;
-    }
-
-    const TOTAL_PAYMENT = formatting(monthlyPayment * LOAN_DURATION);
-    const MONTHLY_INTEREST = formatting(
-      (monthlyPayment * LOAN_DURATION - LOAN_AMOUNT) / LOAN_DURATION
-    );
-    const TOTAL_INTEREST = formatting(
-      monthlyPayment * LOAN_DURATION - LOAN_AMOUNT
-    );
+    getLoanAmount();
+    getLoanTerm();
+    getInterestRate();
+    calculateMonthlyPayment();
 
     console.log(
       `\n${"*".repeat(25).concat(" Results ").concat("*".repeat(25))}\n`
     );
-    console.log(`Payment Every Month: $${monthlyPayment.toFixed(2)}`);
-    console.log(`Total of ${LOAN_DURATION} Payments: $${TOTAL_PAYMENT}`);
-    console.log(`Interest Every Month: $${MONTHLY_INTEREST}`);
-    console.log(`Total Interest: $${TOTAL_INTEREST}`);
+    printPaymentOutput();
+    printInterestOutput();
     console.log(`\n${"*".repeat(59)}\n`);
 
     restart();
