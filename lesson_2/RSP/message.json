@@ -1,0 +1,12 @@
+{
+  "welcome": "Welcome To Rock-Paper-Scissors Game!",
+  "start": "starting game...",
+  "playerName": "Enter your name:",
+  "nameError": "Error: Please enter a name",
+  "greeting": "Hello",
+  "instruction": "please select:\n1 - Rock\n2 - Paper\n3 - Scissors",
+  "selectionError": "Error: Your selection is not available. Please try again.",
+  "win": "You win!",
+  "lose": "You lose!",
+  "tie": "Tie game!"
+}
