@@ -5,8 +5,13 @@
   "nameError": "Error: Please enter a name",
   "greeting": "Hello",
   "instruction": "please select:\n1 - Rock\n2 - Paper\n3 - Scissors",
+  "playerSelection": "You've selected",
+  "computerSelection": "Computer has selected",
   "selectionError": "Error: Your selection is not available. Please try again.",
   "win": "You win!",
   "lose": "You lose!",
-  "tie": "Tie game!"
+  "tie": "Tie game!",
+  "playAgain": "Do you wanna play again?\n1 - Yes\n2 - No",
+  "playAgainError": "Error: Invalid response. Please try again.",
+  "farewell": "Ok! Have a good one!"
 }

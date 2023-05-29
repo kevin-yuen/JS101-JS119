@@ -1,10 +1,12 @@
 const MESSAGE_CONFIG = require("./message.json");
 const READLINE = require("readline-sync");
 
-let playerChoice = undefined;
-let computerChoice = undefined;
+let playerName;
 
-let winner = undefined;
+let playerChoice;
+let computerChoice;
+
+let winner;
 
 const OPTIONS = {
   1: "Rock",
@@ -14,16 +16,21 @@ const OPTIONS = {
 
 const welcomeBoard = () => {
   let welcomeBoard = "";
+  const MESSAGE_LENGTH = MESSAGE_CONFIG["welcome"].length;
 
   for (let line = 0; line < 5; line++) {
     if (line === 0 || line === 4) {
-      welcomeBoard += "-".repeat(48).concat("\n");
+      welcomeBoard += "-".repeat(MESSAGE_LENGTH + 12).concat("\n");
     } else if (line === 1 || line === 3) {
-      welcomeBoard += "|".concat(" ".repeat(46)).concat("|\n");
+      welcomeBoard += "|".concat(" ".repeat(MESSAGE_LENGTH + 10)).concat("|\n");
     } else {
       welcomeBoard += "|"
-        .concat(" ".repeat(5))
-        .concat(MESSAGE_CONFIG["welcome"].concat(" ".repeat(5).concat("|\n")));
+        .concat(" ".repeat(MESSAGE_LENGTH - 31))
+        .concat(
+          MESSAGE_CONFIG["welcome"].concat(
+            " ".repeat(MESSAGE_LENGTH - 31).concat("|\n")
+          )
+        );
     }
   }
 
@@ -34,23 +41,37 @@ const verifyPlayerName = (playerName) => {
   return playerName || false;
 };
 
+const getPlayerName = () => {
+  while (true) {
+    playerName = READLINE.question(
+      `>>> ${MESSAGE_CONFIG["playerName"].concat(" ")}`
+    ).trim();
+
+    const IS_NAME_VALID = verifyPlayerName(playerName);
+
+    if (IS_NAME_VALID) break;
+    console.log(`${MESSAGE_CONFIG["nameError"].concat("\n")}`);
+    continue;
+  }
+};
+
 const verifyPlayerChoice = (playerChoice) => {
   return (playerChoice >= 1 && playerChoice <= 3) || false;
 };
 
 const getPlayerChoice = (playerName) => {
   while (true) {
-    const playerChoice = Number(
+    const PLAYER_CHOICE = Number(
       READLINE.question(
         `>>> ${MESSAGE_CONFIG["greeting"]} ${playerName}, ${MESSAGE_CONFIG[
           "instruction"
         ].concat("\n>>> Your response: ")}`
       )
     );
-    const isChoiceValid = verifyPlayerChoice(playerChoice);
+    const IS_CHOICE_VALID = verifyPlayerChoice(PLAYER_CHOICE);
 
-    if (isChoiceValid) return { [OPTIONS[playerChoice]]: playerChoice };
-    console.log(`${MESSAGE_CONFIG["selectionError"]}`);
+    if (IS_CHOICE_VALID) return { [OPTIONS[PLAYER_CHOICE]]: PLAYER_CHOICE };
+    console.log(`${MESSAGE_CONFIG["selectionError"].concat("\n")}`);
     continue;
   }
 };
@@ -86,7 +107,9 @@ const printWinner = (winner) => {
   }
 
   console.log(
-    `>>> You've selected ${PLAYER_CHOICE_NAME}. Computer has selected ${COMPUTER_CHOICE_NAME}.\n>>> ${winnerMessage}`
+    `>>> ${MESSAGE_CONFIG["playerSelection"]} ${PLAYER_CHOICE_NAME}. ${
+      MESSAGE_CONFIG["computerSelection"]
+    } ${COMPUTER_CHOICE_NAME}.\n>>> ${winnerMessage.concat("\n")}`
   );
 };
 
@@ -99,47 +122,65 @@ const decideWinnerSpecialHandler = (
 
 const decideWinner = (playerChoice, computerChoice) => {
   const PLAYER_CHOICE_NUMBER = Number(Object.values(playerChoice).toString());
-  const COMPUTER_CHOICE_NUMBER = Number(
-    Object.values(computerChoice).toString()
-  );
+  const COMP_CHOICE_NUMBER = Number(Object.values(computerChoice).toString());
 
   if (
-    (PLAYER_CHOICE_NUMBER === 1 && COMPUTER_CHOICE_NUMBER === 3) ||
-    (PLAYER_CHOICE_NUMBER === 3 && COMPUTER_CHOICE_NUMBER === 1)
+    (PLAYER_CHOICE_NUMBER === 1 && COMP_CHOICE_NUMBER === 3) ||
+    (PLAYER_CHOICE_NUMBER === 3 && COMP_CHOICE_NUMBER === 1)
   ) {
     winner = decideWinnerSpecialHandler(
       PLAYER_CHOICE_NUMBER,
-      COMPUTER_CHOICE_NUMBER
+      COMP_CHOICE_NUMBER
     );
-  } else if (PLAYER_CHOICE_NUMBER > COMPUTER_CHOICE_NUMBER) {
+  } else if (PLAYER_CHOICE_NUMBER > COMP_CHOICE_NUMBER) {
     winner = "human";
-  } else if (PLAYER_CHOICE_NUMBER < COMPUTER_CHOICE_NUMBER) {
+  } else if (PLAYER_CHOICE_NUMBER < COMP_CHOICE_NUMBER) {
     winner = "computer";
+  } else {
+    winner = "tie";
   }
 
   printWinner(winner);
 };
 
-// actual program starts here...
-welcomeBoard();
-console.log(MESSAGE_CONFIG["start"]);
+const playAgain = () => {
+  let continuePlay;
 
-setTimeout(() => {
   while (true) {
-    const PLAYER_NAME = READLINE.question(
-      `>>> ${MESSAGE_CONFIG["playerName"].concat(" ")}`
+    continuePlay = READLINE.question(
+      `>>> ${MESSAGE_CONFIG["playAgain"].concat(`\n>>> Your response: `)}`
     ).trim();
-    const IS_NAME_VALID = verifyPlayerName(PLAYER_NAME);
 
-    if (IS_NAME_VALID) {
-      playerChoice = getPlayerChoice(PLAYER_NAME);
-      computerChoice = getComputerChoice(randomComputerChoice());
-
-      decideWinner(playerChoice, computerChoice);
-      break;
-    } else {
-      console.log(`${MESSAGE_CONFIG["nameError"]}`);
+    if (!continuePlay) {
+      console.log(`${MESSAGE_CONFIG["playAgainError"].concat("\n")}`);
       continue;
     }
+    break;
   }
-}, 5000);
+
+  return continuePlay;
+};
+
+// actual program starts here...
+console.clear();
+welcomeBoard();
+console.log(MESSAGE_CONFIG["start"].concat("\n"));
+
+setTimeout(() => {
+  getPlayerName();
+
+  while (true) {
+    playerChoice = getPlayerChoice(playerName);
+    computerChoice = getComputerChoice(randomComputerChoice());
+
+    decideWinner(playerChoice, computerChoice);
+    const CONTINUE_GAME = playAgain();
+
+    if (Number(CONTINUE_GAME) === 2) {
+      console.log(`${MESSAGE_CONFIG["farewell"]}`);
+      break;
+    }
+    console.log("\n");
+    continue;
+  }
+}, 1500);
