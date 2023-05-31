@@ -1,0 +1,43 @@
+key, value:
+0 - Spock - sp
+1 - Lizard - l
+2 - Rock - r
+3 - Paper - p
+4 - Scissors - sc
+
+Data structure for key/value:
+obj = [
+    {"sp": "spock"},
+    {"l": "lizard"},
+    {"r": "rock"},
+    {"p": "paper"},
+    {"sc": "scissors"}
+]
+
+Win if one of the followings satisfy...
+4 > 3 > 2 > 1 > 0
+4 > 1
+3 > 0
+(special handling) 0 > 4
+(special handling) 1 > 3
+(special handling) 0 > 2
+(special handling) 2 > 4
+
+Implementation steps:
+1. User input a key for the choice he wants to select
+2. Leverage the key to map for the value and index position
+3. Leverage the index position for the decisioning logic
+3a. Decisioning Logic:
+IF human > computer
+AND the difference (i.e. human - computer) is 1 or 3
+THEN human win
+
+IF human < computer
+AND the difference (i.e. human - computer) is -2 or -4
+THEN human win
+
+IF human = computer
+THEN tie game
+
+ELSE
+human lose
